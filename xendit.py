@@ -30,7 +30,9 @@ else:
     env_label = "DEVELOPMENT"
 
 if not secret_key:
-    print(f"\n❌ Error: XENDIT_SECRET_KEY_{env_label.upper()} tidak ditemukan di environment variables!")
+    print(
+        f"\n❌ Error: XENDIT_SECRET_KEY_{env_label.upper()} tidak ditemukan di environment variables!"
+    )
     print("   Pastikan file .env sudah dibuat dan berisi secret key.")
     exit(1)
 
@@ -43,10 +45,7 @@ try:
     response = httpx.post(
         "https://api.xendit.co/v3/payment_requests",
         auth=httpx.BasicAuth(username=secret_key, password=""),
-        headers={
-            "accept": "application/json",
-            "api-version": "2024-11-11"
-        },
+        headers={"accept": "application/json", "api-version": "2024-11-11"},
         json={
             "reference_id": reference_id,
             "type": "PAY",
@@ -57,7 +56,7 @@ try:
             "channel_code": "QRIS",
             "channel_properties": {
                 "success_return_url": "https://example.com/success",
-                "failure_return_url": "https://example.com/failure"
+                "failure_return_url": "https://example.com/failure",
             },
             "description": f"Pembayaran QRIS {reference_id}",
             "customer": {
@@ -67,27 +66,27 @@ try:
                     "given_names": "John",
                     "surname": "Doe",
                     "email": "john.doe@example.com",
-                    "mobile_number": "+6281234567890"
-                }
-            }
+                    "mobile_number": "+6281234567890",
+                },
+            },
         },
-        timeout=15.0
+        timeout=15.0,
     )
-    
+
     print(f"\n✅ Status Code: {response.status_code}")
-    
+
     if response.status_code == 201:
         data = response.json()
         payment_id = data["payment_request_id"]
         status = data["status"]
         amount = data["request_amount"]
-        
+
         # 🔍 DEBUG: Print lengkap struktur actions
         print("\n" + "=" * 60)
         print("🔍 STRUKTUR ACTIONS (QRIS)")
         print("=" * 60)
         print(json.dumps(data.get("actions", []), indent=2))
-        
+
         # Ambil QR content
         actions = data.get("actions", [])
         if actions and len(actions) > 0:
@@ -95,7 +94,7 @@ try:
             qr_type = action.get("type")
             descriptor = action.get("descriptor")
             qr_value = action.get("value", "")
-            
+
             print("\n" + "=" * 60)
             print("✅ QRIS BERHASIL DIBUAT!")
             print("=" * 60)
@@ -107,12 +106,12 @@ try:
             print(f"🔤 QR Value (length) : {len(qr_value)} chars")
             print(f"\n📱 QR Content:")
             print(f"   {qr_value}")
-            
+
             # Generate QR image (opsional)
             try:
                 import qrcode
                 from PIL import Image
-                
+
                 qr = qrcode.QRCode(
                     version=1,
                     error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -139,20 +138,21 @@ try:
             print("\n❌ Tidak ada actions di response!")
             print("Response lengkap:")
             print(json.dumps(data, indent=2))
-            
+
     elif response.status_code == 409:
         print("\n❌ DUPLICATE_ERROR: Reference ID sudah dipakai")
         print(json.dumps(response.json(), indent=2))
     else:
         print(f"\n❌ Error {response.status_code}:")
         print(json.dumps(response.json(), indent=2))
-        
+
 except httpx.RequestError as e:
     print(f"\n❌ Request Error: {e}")
     print("   Pastikan URL endpoint TANPA SPASI di akhir!")
 except Exception as e:
     print(f"\n❌ Error: {type(e).__name__}: {e}")
     import traceback
+
     traceback.print_exc()
 
 print("\n" + "=" * 60)

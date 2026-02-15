@@ -15,7 +15,9 @@ else:
     env_label = "DEVELOPMENT"
 
 if not secret_key:
-    print(f"❌ Error: XENDIT_SECRET_KEY_{env_label.upper()} tidak ditemukan di environment variables!")
+    print(
+        f"❌ Error: XENDIT_SECRET_KEY_{env_label.upper()} tidak ditemukan di environment variables!"
+    )
     print("   Pastikan file .env sudah dibuat dan berisi secret key.")
     exit(1)
 
@@ -25,10 +27,7 @@ response = httpx.get(
     "https://api.xendit.co/balance",
     auth=httpx.BasicAuth(username=secret_key, password=""),
     headers={"accept": "application/json"},
-    params={
-        "account_type": "CASH",
-        "at_timestamp": "2024-01-01T00:00:00Z"
-    }
+    params={"account_type": "CASH", "at_timestamp": "2024-01-01T00:00:00Z"},
 )
 
 print(response.json())
