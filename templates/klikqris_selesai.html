@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102a2a">
+  <title>Menunggu Konfirmasi Pembayaran | KlikQRIS</title>
+  <style>
+    :root { color-scheme: light; font-family: "Segoe UI", Arial, sans-serif; }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px;
+      color: #152e2d; background: radial-gradient(circle at 10% 10%, #d8f4dc, transparent 42%), #f6f4eb;
+    }
+    main {
+      width: min(100%, 580px); padding: clamp(28px, 6vw, 52px); border: 1px solid #d7e5dc;
+      border-radius: 24px; background: #fffefa; box-shadow: 0 18px 55px #163b3020;
+    }
+    .label { margin: 0 0 28px; color: #18685a; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    .icon { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; background: #e4f3e9; color: #116a51; font-size: 30px; }
+    h1 { margin: 26px 0 14px; font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.12; letter-spacing: -.04em; }
+    p { margin: 0; color: #4d6560; line-height: 1.7; }
+    .note { margin-top: 32px; padding: 20px; border-left: 3px solid #22936d; border-radius: 0 12px 12px 0; background: #eef8f0; }
+    .note strong { display: block; margin-bottom: 6px; color: #173e32; }
+    footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5ebe5; font-size: .85rem; color: #687c75; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="label">KlikQRIS / Pembayaran</p>
+    <div class="icon" aria-hidden="true">&#8987;</div>
+    <h1>Menunggu konfirmasi pembayaran</h1>
+    <p>Anda sudah kembali dari halaman pembayaran. Kami masih perlu memeriksa status transaksi sebelum menyatakan pembayaran berhasil.</p>
+    <div class="note">
+      <strong>Sudah melakukan pembayaran?</strong>
+      <p>Simpan nomor pesanan Anda dan periksa statusnya melalui aplikasi atau hubungi pengelola jika belum ada konfirmasi.</p>
+    </div>
+    <footer>Halaman ini bukan bukti pembayaran. Status resmi harus dikonfirmasi melalui API KlikQRIS atau webhook yang terverifikasi.</footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bayar dengan KlikQRIS | Sandbox</title>
+  <style>
+    :root { font-family: "Segoe UI", Arial, sans-serif; color: #183b34; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; display: grid; place-items: center; padding: 24px; background: #f4f5ed; }
+    main { width: min(100%, 480px); padding: 32px; border-radius: 22px; background: #fff; box-shadow: 0 18px 50px #174a321c; }
+    .eyebrow { color: #1b8664; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 18px 0 10px; font-size: 2rem; letter-spacing: -.04em; }
+    p { color: #5b716a; line-height: 1.6; }
+    label { display: block; margin: 24px 0 8px; font-size: .85rem; font-weight: 700; }
+    input { width: 100%; padding: 12px; border: 1px solid #d6e3db; border-radius: 10px; font: inherit; }
+    button { width: 100%; margin-top: 24px; padding: 14px 18px; border: 0; border-radius: 12px; background: #e6a82f; color: #332100; font: inherit; font-weight: 700; cursor: pointer; }
+    button:disabled { cursor: not-allowed; opacity: .5; }
+    .hint { margin-top: 18px; font-size: .82rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">KlikQRIS / Sandbox Snap</div>
+    <h1>Simulasi pembayaran</h1>
+    <p>Gunakan halaman ini untuk menguji overlay pembayaran sandbox dari website Anda.</p>
+
+    <label for="order-id">Order ID</label>
+    <input id="order-id" value="{{ order_id }}" placeholder="STEST-XXXXXXXXXXXX">
+
+    <label for="signature">Signature</label>
+    <input id="signature" value="{{ signature }}" placeholder="SANDBOX_SIGNATURE_XXXXX">
+
+    <button id="btnPay" type="button" data-signature="{{ signature }}" disabled>Bayar (Sandbox Mode)</button>
+    <p class="hint">Signature diambil dari response endpoint <code>/qris/create</code>. Jangan hardcode signature di aplikasi produksi.</p>
+  </main>
+
+  <script>
+    // The provider library uses the production API path even when env=sandbox.
+    const nativeFetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      const url = typeof input === 'string' ? input : input.url;
+      const sandboxUrl = url
+        .replace('https://klikqris.com/api/snap/', 'https://klikqris.com/api/sandbox/snap/')
+        .replace('https://klikqris.com/api/cek-status-direct', 'https://klikqris.com/api/sandbox/cek-status-direct');
+      return nativeFetch(sandboxUrl, init);
+    };
+
+    const orderId = document.getElementById('order-id');
+    const signature = document.getElementById('signature');
+    const button = document.getElementById('btnPay');
+
+    function updateButton() {
+      const ready = orderId.value.trim() && signature.value.trim();
+      button.disabled = !ready;
+      button.dataset.signature = signature.value.trim();
+    }
+    orderId.addEventListener('input', updateButton);
+    signature.addEventListener('input', updateButton);
+    updateButton();
+  </script>
+  <script src="https://klikqris.com/js/payment-snap.js?env=sandbox&t={{ range(1000000, 9999999) | random }}"></script>
+</body>
+</html>
